@@ -43,7 +43,7 @@ const Navbar = () => {
             <Link to="/how-it-works" className="text-foreground/80 hover:text-primary transition-colors">
               How It Works
             </Link>
-            <Link to="/volunteer" className="text-foreground/80 hover:text-primary transition-colors">
+            <Link to="/register?role=volunteer" className="text-foreground/80 hover:text-primary transition-colors">
               Volunteer
             </Link>
             <Link to="/about" className="text-foreground/80 hover:text-primary transition-colors">
@@ -96,7 +96,7 @@ const Navbar = () => {
                 How It Works
               </Link>
               <Link 
-                to="/volunteer" 
+                to="/register?role=volunteer" 
                 className="text-foreground/80 hover:text-primary transition-colors py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
