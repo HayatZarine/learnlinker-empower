@@ -33,11 +33,11 @@ Optimized for low-bandwidth regions.
 
 ## 🛠️ Tech Stack
 Layer	Technology
-Frontend	HTML, CSS, JavaScript
-Backend	Flask / Node.js (Planned for full build)
-AI Matching	Python (AI model to be integrated)
-Deployment	Lovable App (for MVP)
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Frontend: 	HTML, CSS(Tailwind CSS) , JavaScript (React.js)
+- Backend	: Flask / Node.js (Planned for full build)
+- AI Matching	Python (AI model to be integrated) : Gemini API for student qna chatbot
+- Deployment: 	Lovable App (for MVP)
+If you want to work locally using your own IDE, you can clone this repo and push changes.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
