@@ -1,5 +1,5 @@
 # 🌍 LearnLinker Empower
-Connecting Volunteer Teachers with Underprivileged Students Worldwide
+Connecting Volunteer Teachers with Underprivileged Students Worldwide 
 🔗 MVP Live Demo : `https://learnlinker-empower.lovable.app/`
 
  ## 📌 About the Project
