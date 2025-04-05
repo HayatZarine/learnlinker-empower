@@ -1,21 +1,42 @@
-# Welcome to your Lovable project
+🌍 LearnLinker Empower
+Connecting Volunteer Teachers with Underprivileged Students Worldwide
+🔗 MVP Live Demo
 
-## Project info
+📌 About the Project
+LearnLinker Empower is a global educational platform designed to bring quality education to underprivileged children and marginalized women—especially those restricted from going outside due to societal norms or abuse. This initiative uses AI-powered matchmaking, real-time communication, and a secure, hidden learning mode to make learning accessible, safe, and personalized.
 
-**URL**: https://lovable.dev/projects/342451e7-d9d1-4bd9-b983-f10978f9cb56
+✨ Key Features
+🧠 AI-Based Student–Teacher Matching
+Students enter their grade, level, and subject.
 
-## How can I edit this code?
+AI recommends suitable volunteer teachers from around the world.
 
-There are several ways of editing your application.
+🧑‍🏫 One-on-One Live Interaction
+Real-time communication between teacher and student.
 
-**Use Lovable**
+Time slots are booked based on teacher availability.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/342451e7-d9d1-4bd9-b983-f10978f9cb56) and start prompting.
+🛡️ Hidden Mode for Safety
+A cloaked version of the app to provide stealth access to women facing restrictions.
 
-Changes made via Lovable will be committed automatically to this repo.
+Camouflaged as another app (e.g., a calculator or notepad).
 
-**Use your preferred IDE**
+👩‍🎓 Education for Women Facing Abuse
+Secure onboarding system with optional counselor contact.
 
+Women and girls can learn discreetly and safely from home.
+
+🌐 Accessible Anywhere
+Fully browser-based — no need for advanced hardware or installations.
+
+Optimized for low-bandwidth regions.
+
+🛠️ Tech Stack
+Layer	Technology
+Frontend	HTML, CSS, JavaScript
+Backend	Flask / Node.js (Planned for full build)
+AI Matching	Python (AI model to be integrated)
+Deployment	Lovable App (for MVP)
 If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
@@ -35,35 +56,18 @@ npm i
 # Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
+🌟 Unique Selling Proposition (USP)
+First app offering AI-powered matching between volunteer educators and marginalized students.
 
-**Edit a file directly in GitHub**
+Stealth learning mode for victims of abuse.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Designed for global collaboration with minimum tech requirements.
 
-**Use GitHub Codespaces**
+100% free and open for volunteers to contribute.
+🤝 Contributing
+We're looking for contributors to help scale this into a full platform!
+Reach out at: [hayatzarine@gmail.com]
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+📃 License
+MIT License © 2025 [Zarine Hayat]
 
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/342451e7-d9d1-4bd9-b983-f10978f9cb56) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
