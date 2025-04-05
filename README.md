@@ -1,6 +1,6 @@
 🌍 LearnLinker Empower
 Connecting Volunteer Teachers with Underprivileged Students Worldwide
-🔗 MVP Live Demo
+🔗 MVP Live Demo : `https://learnlinker-empower.lovable.app/`
 
 📌 About the Project
 LearnLinker Empower is a global educational platform designed to bring quality education to underprivileged children and marginalized women—especially those restricted from going outside due to societal norms or abuse. This initiative uses AI-powered matchmaking, real-time communication, and a secure, hidden learning mode to make learning accessible, safe, and personalized.
