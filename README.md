@@ -70,4 +70,14 @@ Reach out at: [hayatzarine@gmail.com]
 
 ## 📃 License
 MIT License © 2025 [Zarine Hayat]
+## Screenshots 
+![image](https://github.com/user-attachments/assets/405547e3-11bb-48fd-a573-cc3642ad9ea0)
+![image](https://github.com/user-attachments/assets/7a8a7471-d05b-48fc-b63b-be627db99bab)
+![image](https://github.com/user-attachments/assets/091cfeaf-add5-4e3b-b938-60bcc8b77105)
+
+![image](https://github.com/user-attachments/assets/56134f57-1ffd-4ee2-b1cf-6bfef8ee4444)
+![image](https://github.com/user-attachments/assets/1465c11a-c9ca-4403-97df-2c866b648811)
+
+
+
 
