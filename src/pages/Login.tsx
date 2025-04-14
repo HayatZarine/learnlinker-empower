@@ -1,15 +1,47 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from "sonner";
 
 const Login = () => {
-  // This is a placeholder for actual login functionality
-  // In a real implementation, this would connect to a backend
-  const handleLogin = (e: React.FormEvent) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast("Login functionality will be implemented with backend integration");
+    setIsLoading(true);
+
+    try {
+      // API call to backend for authentication
+      const response = await fetch('https://api.learnlinker.example/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store token in localStorage for authenticated requests
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        
+        toast.success("Login successful!");
+        navigate('/dashboard'); // Redirect to dashboard or homepage after login
+      } else {
+        toast.error(data.message || "Login failed. Please check your credentials.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Connection error. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -34,6 +66,8 @@ const Login = () => {
                   autoComplete="email"
                   required
                   className="mt-1 block w-full px-3 py-2 bg-background border border-input rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               
@@ -48,6 +82,8 @@ const Login = () => {
                   autoComplete="current-password"
                   required
                   className="mt-1 block w-full px-3 py-2 bg-background border border-input rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </div>
@@ -73,8 +109,8 @@ const Login = () => {
             </div>
 
             <div>
-              <Button type="submit" className="w-full">
-                Sign in
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Signing in..." : "Sign in"}
               </Button>
             </div>
           </form>
