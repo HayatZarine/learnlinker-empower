@@ -79,7 +79,7 @@
   }
   
   .glass-card {
-    @apply bg-white/70 backdrop-blur-lg border border-white/10;
+    @apply bg-white/70 dark:bg-gray-900/70 backdrop-blur-lg border border-white/10 dark:border-gray-800/50;
   }
   
   .text-gradient {
@@ -131,3 +131,4 @@
     transform: translateY(-10px);
   }
 }
+

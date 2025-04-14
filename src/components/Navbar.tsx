@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import StealthButton from './StealthButton';
+import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -43,7 +44,7 @@ const Navbar = () => {
     <nav 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-white/90 backdrop-blur-md shadow-md py-2' 
+          ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-md py-2' 
           : 'bg-transparent py-4'
       }`}
     >
@@ -72,6 +73,7 @@ const Navbar = () => {
             <SafeLink to="/about" className="text-foreground/80 hover:text-primary transition-colors">
               About Us
             </SafeLink>
+            <ThemeToggle />
             <SafeLink to="/login" className="btn-secondary">
               Login
             </SafeLink>
@@ -82,9 +84,10 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
+            <ThemeToggle />
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-foreground focus:outline-none"
+              className="ml-2 text-foreground focus:outline-none"
               aria-label="Toggle menu"
             >
               {!isMobileMenuOpen ? (
