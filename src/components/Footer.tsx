@@ -1,16 +1,39 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Footer = () => {
+  // Check if component is within Router context to prevent errors
+  const isInRouterContext = (() => {
+    try {
+      useLocation();
+      return true;
+    } catch (error) {
+      return false;
+    }
+  })();
+
+  // Generate either Link component (if in Router) or regular anchor tag
+  const SafeLink = ({ to, className, children }) => {
+    return isInRouterContext ? (
+      <Link to={to} className={className}>
+        {children}
+      </Link>
+    ) : (
+      <a href={to} className={className}>
+        {children}
+      </a>
+    );
+  };
+
   return (
     <footer className="bg-primary/5 py-12 md:py-16">
       <div className="section-container">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           <div>
-            <Link to="/" className="text-xl font-semibold text-primary flex items-center mb-4">
+            <SafeLink to="/" className="text-xl font-semibold text-primary flex items-center mb-4">
               <span className="mr-1 text-accent">Learn</span>Linker
-            </Link>
+            </SafeLink>
             <p className="text-foreground/70 mb-6 max-w-xs">
               Connecting underprivileged students with volunteer teachers worldwide through AI-powered matching.
             </p>
@@ -42,19 +65,19 @@ const Footer = () => {
             <h3 className="text-lg font-medium mb-4">About</h3>
             <ul className="space-y-3">
               <li>
-                <Link to="/about" className="text-foreground/70 hover:text-primary transition-colors">Our Mission</Link>
+                <SafeLink to="/about" className="text-foreground/70 hover:text-primary transition-colors">Our Mission</SafeLink>
               </li>
               <li>
-                <Link to="/team" className="text-foreground/70 hover:text-primary transition-colors">Our Team</Link>
+                <SafeLink to="/team" className="text-foreground/70 hover:text-primary transition-colors">Our Team</SafeLink>
               </li>
               <li>
-                <Link to="/impact" className="text-foreground/70 hover:text-primary transition-colors">Our Impact</Link>
+                <SafeLink to="/impact" className="text-foreground/70 hover:text-primary transition-colors">Our Impact</SafeLink>
               </li>
               <li>
-                <Link to="/partners" className="text-foreground/70 hover:text-primary transition-colors">Partners</Link>
+                <SafeLink to="/partners" className="text-foreground/70 hover:text-primary transition-colors">Partners</SafeLink>
               </li>
               <li>
-                <Link to="/blog" className="text-foreground/70 hover:text-primary transition-colors">Blog</Link>
+                <SafeLink to="/blog" className="text-foreground/70 hover:text-primary transition-colors">Blog</SafeLink>
               </li>
             </ul>
           </div>
@@ -63,19 +86,19 @@ const Footer = () => {
             <h3 className="text-lg font-medium mb-4">Resources</h3>
             <ul className="space-y-3">
               <li>
-                <Link to="/how-it-works" className="text-foreground/70 hover:text-primary transition-colors">How It Works</Link>
+                <SafeLink to="/how-it-works" className="text-foreground/70 hover:text-primary transition-colors">How It Works</SafeLink>
               </li>
               <li>
-                <Link to="/safety" className="text-foreground/70 hover:text-primary transition-colors">Safety Measures</Link>
+                <SafeLink to="/safety" className="text-foreground/70 hover:text-primary transition-colors">Safety Measures</SafeLink>
               </li>
               <li>
-                <Link to="/faq" className="text-foreground/70 hover:text-primary transition-colors">FAQs</Link>
+                <SafeLink to="/faq" className="text-foreground/70 hover:text-primary transition-colors">FAQs</SafeLink>
               </li>
               <li>
-                <Link to="/volunteer-resources" className="text-foreground/70 hover:text-primary transition-colors">For Volunteers</Link>
+                <SafeLink to="/volunteer-resources" className="text-foreground/70 hover:text-primary transition-colors">For Volunteers</SafeLink>
               </li>
               <li>
-                <Link to="/student-resources" className="text-foreground/70 hover:text-primary transition-colors">For Students</Link>
+                <SafeLink to="/student-resources" className="text-foreground/70 hover:text-primary transition-colors">For Students</SafeLink>
               </li>
             </ul>
           </div>
@@ -116,15 +139,15 @@ const Footer = () => {
               &copy; {new Date().getFullYear()} LearnLinker. All rights reserved.
             </p>
             <div className="flex space-x-6 text-sm">
-              <Link to="/privacy" className="text-foreground/60 hover:text-primary transition-colors">
+              <SafeLink to="/privacy" className="text-foreground/60 hover:text-primary transition-colors">
                 Privacy Policy
-              </Link>
-              <Link to="/terms" className="text-foreground/60 hover:text-primary transition-colors">
+              </SafeLink>
+              <SafeLink to="/terms" className="text-foreground/60 hover:text-primary transition-colors">
                 Terms of Service
-              </Link>
-              <Link to="/cookies" className="text-foreground/60 hover:text-primary transition-colors">
+              </SafeLink>
+              <SafeLink to="/cookies" className="text-foreground/60 hover:text-primary transition-colors">
                 Cookie Policy
-              </Link>
+              </SafeLink>
             </div>
           </div>
         </div>

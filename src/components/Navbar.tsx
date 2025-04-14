@@ -1,11 +1,34 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import StealthButton from './StealthButton';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Check if component is within Router context to prevent errors
+  const isInRouterContext = (() => {
+    try {
+      useLocation();
+      return true;
+    } catch (error) {
+      return false;
+    }
+  })();
+
+  // Generate either Link component (if in Router) or regular anchor tag
+  const SafeLink = ({ to, className, children, onClick = null }) => {
+    return isInRouterContext ? (
+      <Link to={to} className={className} onClick={onClick}>
+        {children}
+      </Link>
+    ) : (
+      <a href={to} className={className} onClick={onClick}>
+        {children}
+      </a>
+    );
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,34 +50,34 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
-            <Link 
+            <SafeLink 
               to="/" 
               className="text-xl md:text-2xl font-semibold text-primary flex items-center"
             >
               <span className="mr-2 text-accent">Learn</span>Linker
-            </Link>
+            </SafeLink>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="text-foreground/80 hover:text-primary transition-colors">
+            <SafeLink to="/" className="text-foreground/80 hover:text-primary transition-colors">
               Home
-            </Link>
-            <Link to="/how-it-works" className="text-foreground/80 hover:text-primary transition-colors">
+            </SafeLink>
+            <SafeLink to="/how-it-works" className="text-foreground/80 hover:text-primary transition-colors">
               How It Works
-            </Link>
-            <Link to="/register?role=volunteer" className="text-foreground/80 hover:text-primary transition-colors">
+            </SafeLink>
+            <SafeLink to="/register?role=volunteer" className="text-foreground/80 hover:text-primary transition-colors">
               Volunteer
-            </Link>
-            <Link to="/about" className="text-foreground/80 hover:text-primary transition-colors">
+            </SafeLink>
+            <SafeLink to="/about" className="text-foreground/80 hover:text-primary transition-colors">
               About Us
-            </Link>
-            <Link to="/login" className="btn-secondary">
+            </SafeLink>
+            <SafeLink to="/login" className="btn-secondary">
               Login
-            </Link>
-            <Link to="/register" className="btn-primary">
+            </SafeLink>
+            <SafeLink to="/register" className="btn-primary">
               Sign Up
-            </Link>
+            </SafeLink>
           </div>
 
           {/* Mobile Menu Button */}
@@ -81,49 +104,49 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4 animate-fade-in">
             <div className="flex flex-col space-y-3">
-              <Link 
+              <SafeLink 
                 to="/" 
                 className="text-foreground/80 hover:text-primary transition-colors py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Home
-              </Link>
-              <Link 
+              </SafeLink>
+              <SafeLink 
                 to="/how-it-works" 
                 className="text-foreground/80 hover:text-primary transition-colors py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 How It Works
-              </Link>
-              <Link 
+              </SafeLink>
+              <SafeLink 
                 to="/register?role=volunteer" 
                 className="text-foreground/80 hover:text-primary transition-colors py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Volunteer
-              </Link>
-              <Link 
+              </SafeLink>
+              <SafeLink 
                 to="/about" 
                 className="text-foreground/80 hover:text-primary transition-colors py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 About Us
-              </Link>
+              </SafeLink>
               <div className="flex space-x-4 pt-2">
-                <Link 
+                <SafeLink 
                   to="/login" 
                   className="btn-secondary"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Login
-                </Link>
-                <Link 
+                </SafeLink>
+                <SafeLink 
                   to="/register" 
                   className="btn-primary"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Sign Up
-                </Link>
+                </SafeLink>
               </div>
             </div>
           </div>
