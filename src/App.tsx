@@ -12,6 +12,7 @@ import Register from "./pages/Register";
 import HowItWorks from "./pages/HowItWorks";
 import DifficultyTest from "./components/DifficultyTest";
 import TeacherFinder from "./components/TeacherFinder";
+import StealthButton from "./components/StealthButton";
 
 const queryClient = new QueryClient();
 
@@ -21,30 +22,33 @@ const App = () => (
       <AuthProvider>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/how-it-works" element={<HowItWorks />} />
-              
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <div className="min-h-screen p-8">
-                    <h1 className="text-3xl font-bold text-primary mb-8 text-center">Welcome to Dashboard</h1>
-                    <div className="max-w-6xl mx-auto space-y-8">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <DifficultyTest />
-                        <TeacherFinder />
+            <div className="relative">
+              <Toaster />
+              <Sonner />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/how-it-works" element={<HowItWorks />} />
+                
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <div className="min-h-screen p-8">
+                      <h1 className="text-3xl font-bold text-primary mb-8 text-center">Welcome to Dashboard</h1>
+                      <div className="max-w-6xl mx-auto space-y-8">
+                        <StudentDashboard />
                       </div>
                     </div>
-                  </div>
-                </ProtectedRoute>
-              } />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="*" element={<NotFound />} />
+              </Routes>
               
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+              <div className="fixed bottom-4 right-4 z-50">
+                <StealthButton />
+              </div>
+            </div>
           </TooltipProvider>
         </ThemeProvider>
       </AuthProvider>
