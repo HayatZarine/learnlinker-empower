@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from "sonner";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { supabase } from '@/integrations/supabase/client';
 
 const Register = () => {
   const location = useLocation();
@@ -24,7 +24,6 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   
   useEffect(() => {
-    // Check if there's a role parameter in the URL
     const queryParams = new URLSearchParams(location.search);
     const role = queryParams.get('role');
     
@@ -57,54 +56,52 @@ const Register = () => {
 
     try {
       if (isOtpMode) {
-        // API call for OTP verification and registration
-        const response = await fetch('https://api.learnlinker.example/auth/register/otp', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            phoneNumber,
-            otp,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            role: userRole
-          }),
+        const { error } = await supabase.auth.verifyOtp({
+          phone: phoneNumber,
+          token: otp,
+          type: 'phone_change',
+          options: {
+            data: {
+              first_name: formData.firstName,
+              last_name: formData.lastName,
+              role: userRole,
+              subjects: formData.subjects,
+              grade: formData.grade
+            }
+          }
         });
 
-        const data = await response.json();
-
-        if (response.ok) {
+        if (error) {
+          toast.error(error.message);
+        } else {
           toast.success("Registration successful!");
           navigate('/login');
-        } else {
-          toast.error(data.message || "OTP verification failed. Please try again.");
         }
       } else {
-        // Regular email/password registration
-        const response = await fetch('https://api.learnlinker.example/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ...formData,
-            role: userRole
-          }),
+        const { error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: {
+              first_name: formData.firstName,
+              last_name: formData.lastName,
+              role: userRole,
+              subjects: formData.subjects,
+              grade: formData.grade
+            }
+          }
         });
 
-        const data = await response.json();
-
-        if (response.ok) {
-          toast.success("Registration successful!");
-          navigate('/login'); // Redirect to login page after successful registration
+        if (error) {
+          toast.error(error.message);
         } else {
-          toast.error(data.message || "Registration failed. Please try again.");
+          toast.success("Registration successful! Please check your email to verify your account.");
+          navigate('/login');
         }
       }
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error("Connection error. Please try again later.");
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -119,25 +116,27 @@ const Register = () => {
     
     setIsLoading(true);
     try {
-      // API call to send OTP
-      const response = await fetch('https://api.learnlinker.example/auth/send-otp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ phoneNumber }),
+      const { error } = await supabase.auth.signUp({
+        phone: phoneNumber,
+        options: {
+          data: {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            role: userRole,
+            subjects: formData.subjects,
+            grade: formData.grade
+          }
+        }
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success("OTP sent to your phone!");
+      if (error) {
+        toast.error(error.message);
       } else {
-        toast.error(data.message || "Failed to send OTP. Please try again.");
+        toast.success("OTP sent to your phone!");
       }
     } catch (error) {
       console.error("OTP request error:", error);
-      toast.error("Connection error. Please try again later.");
+      toast.error("Failed to send OTP. Please try again.");
     } finally {
       setIsLoading(false);
     }

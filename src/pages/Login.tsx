@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from "sonner";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { Key } from "lucide-react";
+import { supabase } from '@/integrations/supabase/client';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -21,54 +20,32 @@ const Login = () => {
 
     try {
       if (isOtpMode) {
-        // API call for OTP verification
-        const response = await fetch('https://api.learnlinker.example/auth/login/otp', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ phoneNumber, otp }),
+        const { error } = await supabase.auth.verifyOtp({
+          phone: phoneNumber,
+          token: otp,
+          type: 'sms'
         });
 
-        const data = await response.json();
-
-        if (response.ok) {
-          // Store token in localStorage for authenticated requests
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          
-          toast.success("Login successful!");
-          navigate('/dashboard'); 
+        if (error) {
+          toast.error(error.message);
         } else {
-          toast.error(data.message || "OTP verification failed. Please try again.");
+          toast.success("Login successful!");
         }
       } else {
-        // Regular email/password login
-        // API call to backend for authentication
-        const response = await fetch('https://api.learnlinker.example/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }),
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
         });
 
-        const data = await response.json();
-
-        if (response.ok) {
-          // Store token in localStorage for authenticated requests
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          
-          toast.success("Login successful!");
-          navigate('/dashboard'); // Redirect to dashboard or homepage after login
+        if (error) {
+          toast.error(error.message);
         } else {
-          toast.error(data.message || "Login failed. Please check your credentials.");
+          toast.success("Login successful!");
         }
       }
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("Connection error. Please try again later.");
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -83,25 +60,18 @@ const Login = () => {
     
     setIsLoading(true);
     try {
-      // API call to send OTP
-      const response = await fetch('https://api.learnlinker.example/auth/send-otp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ phoneNumber }),
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: phoneNumber
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        toast.success("OTP sent to your phone!");
+      if (error) {
+        toast.error(error.message);
       } else {
-        toast.error(data.message || "Failed to send OTP. Please try again.");
+        toast.success("OTP sent to your phone!");
       }
     } catch (error) {
       console.error("OTP request error:", error);
-      toast.error("Connection error. Please try again later.");
+      toast.error("Failed to send OTP. Please try again.");
     } finally {
       setIsLoading(false);
     }
