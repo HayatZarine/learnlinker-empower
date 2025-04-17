@@ -1,4 +1,3 @@
-
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -11,6 +10,8 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import HowItWorks from "./pages/HowItWorks";
+import DifficultyTest from "./components/DifficultyTest";
+import TeacherFinder from "./components/TeacherFinder";
 
 const queryClient = new QueryClient();
 
@@ -30,10 +31,13 @@ const App = () => (
               
               <Route path="/dashboard" element={
                 <ProtectedRoute>
-                  <div className="min-h-screen flex items-center justify-center">
-                    <div className="text-center p-8">
-                      <h1 className="text-3xl font-bold text-primary">Welcome to Dashboard</h1>
-                      <p className="mt-4">This is a placeholder for the dashboard.</p>
+                  <div className="min-h-screen p-8">
+                    <h1 className="text-3xl font-bold text-primary mb-8 text-center">Welcome to Dashboard</h1>
+                    <div className="max-w-6xl mx-auto space-y-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <DifficultyTest />
+                        <TeacherFinder />
+                      </div>
                     </div>
                   </div>
                 </ProtectedRoute>
@@ -48,7 +52,6 @@ const App = () => (
   </QueryClientProvider>
 );
 
-// Updated ProtectedRoute to use Supabase auth
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
   
