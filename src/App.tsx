@@ -1,3 +1,5 @@
+
+import React from 'react';
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -10,8 +12,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import HowItWorks from "./pages/HowItWorks";
-import DifficultyTest from "./components/DifficultyTest";
-import TeacherFinder from "./components/TeacherFinder";
+import StudentDashboard from "./components/StudentDashboard";
 import StealthButton from "./components/StealthButton";
 
 const queryClient = new QueryClient();
