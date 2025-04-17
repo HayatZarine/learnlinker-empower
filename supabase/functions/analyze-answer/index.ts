@@ -29,11 +29,11 @@ serve(async (req) => {
         messages: [
           { 
             role: "system", 
-            content: "You are a test evaluator that gives scores between 1 and 5. You should respond with ONLY the number score, nothing else." 
+            content: "You are a test evaluator that gives scores between 1 and 5." 
           },
           { 
             role: "user", 
-            content: `Evaluate this answer in terms of complexity and depth. Score 1 for basic answers, 5 for complex and sophisticated responses. The answer is: ${answer}` 
+            content: `Evaluate this answer: ${answer}` 
           }
         ]
       }),

@@ -29,12 +29,10 @@ const DifficultyTest = () => {
       });
 
       if (error) throw error;
-
-      const score = parseInt(data.score);
       
       toast({
         title: "Analysis Complete",
-        description: `Your answer indicates a difficulty level of ${score}/5`,
+        description: `Your answer received a score of ${data.score}/5`,
       });
       
     } catch (error) {
@@ -58,7 +56,7 @@ const DifficultyTest = () => {
         </CardTitle>
         <CardDescription>
           Write a paragraph explaining a complex topic you understand well. 
-          We'll analyze your response to determine your current learning level.
+          We'll evaluate your answer and provide a score from 1 to 5.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -73,7 +71,7 @@ const DifficultyTest = () => {
           className="w-full"
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Analyzing..." : "Start Assessment"}
+          {isSubmitting ? "Analyzing..." : "Submit for Evaluation"}
         </Button>
       </CardContent>
     </Card>
