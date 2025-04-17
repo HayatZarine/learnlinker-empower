@@ -59,8 +59,13 @@ const Register = () => {
         const { error } = await supabase.auth.verifyOtp({
           phone: phoneNumber,
           token: otp,
-          type: 'phone_change',
-          options: {
+          type: 'phone_change'
+        });
+
+        if (error) {
+          toast.error(error.message);
+        } else {
+          const { error: updateError } = await supabase.auth.updateUser({
             data: {
               first_name: formData.firstName,
               last_name: formData.lastName,
@@ -68,14 +73,14 @@ const Register = () => {
               subjects: formData.subjects,
               grade: formData.grade
             }
+          });
+          
+          if (updateError) {
+            toast.error(updateError.message);
+          } else {
+            toast.success("Registration successful!");
+            navigate('/login');
           }
-        });
-
-        if (error) {
-          toast.error(error.message);
-        } else {
-          toast.success("Registration successful!");
-          navigate('/login');
         }
       } else {
         const { error } = await supabase.auth.signUp({
@@ -116,17 +121,8 @@ const Register = () => {
     
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
-        phone: phoneNumber,
-        options: {
-          data: {
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-            role: userRole,
-            subjects: formData.subjects,
-            grade: formData.grade
-          }
-        }
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: phoneNumber
       });
 
       if (error) {
