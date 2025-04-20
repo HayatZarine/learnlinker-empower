@@ -17,8 +17,15 @@ serve(async (req) => {
 
   try {
     const { type, answer, subject, questionDifficulty } = await req.json();
+    
+    // Check if GROQ_API_KEY is available
+    if (!groqApiKey) {
+      throw new Error('GROQ_API_KEY is not set in the environment');
+    }
 
     if (type === 'generate') {
+      console.log('Generating questions for subject:', subject);
+      
       const response = await fetch("https://api.groq.com/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -30,23 +37,45 @@ serve(async (req) => {
           messages: [
             { 
               role: "system", 
-              content: "You are an educational expert creating assessment questions. Generate 10 questions about the given subject: 3 easy, 4 intermediate, and 3 hard questions. Return them as a JSON array with each question having 'text' and 'difficulty' properties." 
-            },
-            { 
-              role: "user", 
-              content: `Generate questions about ${subject}` 
+              content: `You are an educational expert creating assessment questions. Generate exactly 10 questions about ${subject}: 3 easy, 4 intermediate, and 3 hard questions. Format your response as a valid JSON array with each object having "text" and "difficulty" properties. Example: [{"text": "Question here", "difficulty": "easy"}, ...]. Ensure you return valid parseable JSON only.` 
             }
-          ]
+          ],
+          temperature: 0.7,
         }),
       });
 
-      const data = await response.json();
-      const questions = JSON.parse(data.choices[0].message.content);
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Groq API error:', errorData);
+        throw new Error(`Groq API returned status ${response.status}: ${errorData}`);
+      }
 
-      return new Response(JSON.stringify({ questions }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    } else {
+      const data = await response.json();
+      
+      if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
+        throw new Error('Unexpected response format from Groq API');
+      }
+      
+      try {
+        // Parse and validate the JSON response
+        const content = data.choices[0].message.content.trim();
+        const questions = JSON.parse(content);
+        
+        if (!Array.isArray(questions) || questions.length === 0) {
+          throw new Error('Invalid questions format returned');
+        }
+        
+        return new Response(JSON.stringify({ questions }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      } catch (parseError) {
+        console.error('JSON parsing error:', parseError, 'Raw content:', data.choices[0].message.content);
+        throw new Error('Failed to parse Groq API response as valid JSON');
+      }
+      
+    } else if (type === 'evaluate') {
+      console.log('Evaluating answer of difficulty level:', questionDifficulty);
+      
       const response = await fetch("https://api.groq.com/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -64,14 +93,23 @@ serve(async (req) => {
               role: "user", 
               content: `Evaluate this answer: ${answer}` 
             }
-          ]
+          ],
+          temperature: 0.3,
         }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Groq API error:', errorData);
+        throw new Error(`Groq API returned status ${response.status}: ${errorData}`);
+      }
 
       const data = await response.json();
       return new Response(JSON.stringify({ score: data.choices[0].message.content }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
+    } else {
+      throw new Error(`Invalid type: ${type}`);
     }
   } catch (error) {
     console.error('Error in analyze-answer function:', error);

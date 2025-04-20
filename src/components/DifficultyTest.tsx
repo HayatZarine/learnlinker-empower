@@ -5,10 +5,9 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Brain } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 interface Question {
   text: string;
@@ -22,27 +21,42 @@ const DifficultyTest = () => {
   const [answer, setAnswer] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeneratingQuestions, setIsGeneratingQuestions] = useState(false);
-  const { toast } = useToast();
 
   const generateQuestions = async (selectedSubject: string) => {
+    if (!selectedSubject) {
+      toast.error("Please select a subject first");
+      return;
+    }
+    
     setIsGeneratingQuestions(true);
     try {
+      console.log("Calling edge function to generate questions for:", selectedSubject);
+      
       const { data, error } = await supabase.functions.invoke('analyze-answer', {
-        body: { type: 'generate', subject: selectedSubject },
+        body: { 
+          type: 'generate', 
+          subject: selectedSubject 
+        },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error from edge function:', error);
+        throw error;
+      }
       
+      if (!data || !data.questions) {
+        console.error('Invalid response data:', data);
+        throw new Error('Invalid response format from server');
+      }
+      
+      console.log("Received questions:", data.questions);
       setQuestions(data.questions);
       setCurrentQuestionIndex(0);
       setAnswer('');
+      toast.success(`Generated ${data.questions.length} questions for ${selectedSubject}`);
     } catch (error) {
       console.error('Error generating questions:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate questions. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to generate questions. Please try again.");
     } finally {
       setIsGeneratingQuestions(false);
     }
@@ -50,48 +64,42 @@ const DifficultyTest = () => {
 
   const analyzeAnswer = async () => {
     if (!answer.trim()) {
-      toast({
-        title: "Error",
-        description: "Please provide an answer before submitting.",
-        variant: "destructive",
-      });
+      toast.error("Please provide an answer before submitting.");
       return;
     }
 
     setIsSubmitting(true);
     try {
+      const currentQuestion = questions[currentQuestionIndex];
+      console.log("Evaluating answer for question:", currentQuestion.text);
+      
       const { data, error } = await supabase.functions.invoke('analyze-answer', {
         body: { 
           type: 'evaluate',
           answer,
-          questionDifficulty: questions[currentQuestionIndex].difficulty 
+          questionDifficulty: currentQuestion.difficulty 
         },
       });
 
       if (error) throw error;
       
-      toast({
-        title: "Analysis Complete",
-        description: `Your answer received a score of ${data.score}/5`,
+      const score = data.score;
+      toast.success(`Your answer scored ${score}/5`, {
+        description: `Question difficulty: ${currentQuestion.difficulty}`
       });
 
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(prev => prev + 1);
         setAnswer('');
       } else {
-        toast({
-          title: "Test Completed",
-          description: "You've completed all questions!",
+        toast.success("Test Completed", {
+          description: "You've completed all questions!"
         });
       }
       
     } catch (error) {
       console.error('Error analyzing answer:', error);
-      toast({
-        title: "Error",
-        description: "Failed to analyze your answer. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to analyze your answer. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
