@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
@@ -14,6 +13,7 @@ import Register from "./pages/Register";
 import HowItWorks from "./pages/HowItWorks";
 import StudentDashboard from "./components/StudentDashboard";
 import StealthButton from "./components/StealthButton";
+import About from "./pages/About";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +31,7 @@ const App = () => (
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/how-it-works" element={<HowItWorks />} />
+                <Route path="/about" element={<About />} />
                 
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
