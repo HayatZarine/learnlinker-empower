@@ -16,7 +16,7 @@ serve(async (req) => {
   }
 
   try {
-    const { type, answer, subject, questionDifficulty } = await req.json();
+    const { type, answer, subject, questionDifficulty, grade, difficultyLevel } = await req.json();
     
     // Check if GROQ_API_KEY is available
     if (!groqApiKey) {
@@ -108,6 +108,55 @@ serve(async (req) => {
       return new Response(JSON.stringify({ score: data.choices[0].message.content }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
+    } else if (type === 'match') {
+      console.log('Matching teacher for grade:', grade, 'subject:', subject, 'difficulty:', difficultyLevel);
+      
+      const response = await fetch("https://api.groq.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${groqApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "mixtral-8x7b",
+          messages: [
+            { 
+              role: "system", 
+              content: `You are an AI matchmaker for educational purposes. Generate exactly 3 ideal teacher matches for a student based on the following criteria: Grade ${grade}, Subject ${subject}, Difficulty Level ${difficultyLevel}. Format your response as valid JSON array with each object having "name", "expertise", "experience", "teachingStyle", "availability", and "bio" properties. Example: [{"name": "Dr. Jane Smith", "expertise": "Advanced Physics", "experience": "15 years", "teachingStyle": "Interactive and hands-on", "availability": "Weekdays afternoons", "bio": "Short bio here"}, ...]. Ensure you return valid parseable JSON only.` 
+            }
+          ],
+          temperature: 0.7,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Groq API error:', errorData);
+        throw new Error(`Groq API returned status ${response.status}: ${errorData}`);
+      }
+
+      const data = await response.json();
+      
+      if (!data.choices || !data.choices[0] || !data.choices[0].message || !data.choices[0].message.content) {
+        throw new Error('Unexpected response format from Groq API');
+      }
+      
+      try {
+        // Parse and validate the JSON response
+        const content = data.choices[0].message.content.trim();
+        const teachers = JSON.parse(content);
+        
+        if (!Array.isArray(teachers) || teachers.length === 0) {
+          throw new Error('Invalid teachers format returned');
+        }
+        
+        return new Response(JSON.stringify({ teachers }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      } catch (parseError) {
+        console.error('JSON parsing error:', parseError, 'Raw content:', data.choices[0].message.content);
+        throw new Error('Failed to parse Groq API response as valid JSON');
+      }
     } else {
       throw new Error(`Invalid type: ${type}`);
     }
