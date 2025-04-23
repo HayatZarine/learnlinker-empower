@@ -14,6 +14,7 @@ import HowItWorks from "./pages/HowItWorks";
 import StudentDashboard from "./components/StudentDashboard";
 import StealthButton from "./components/StealthButton";
 import About from "./pages/About";
+import Donations from "./pages/Donations";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
                 <Route path="/register" element={<Register />} />
                 <Route path="/how-it-works" element={<HowItWorks />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/donations" element={<Donations />} />
                 
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
