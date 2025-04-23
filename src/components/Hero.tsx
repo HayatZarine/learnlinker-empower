@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -20,6 +19,9 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to="/register" className="btn-primary text-center py-3 px-8">
                 Get Started
+              </Link>
+              <Link to="/donations" className="btn-accent text-center py-3 px-8">
+                Donate Now
               </Link>
               <Link to="/how-it-works" className="btn-secondary text-center py-3 px-8">
                 How It Works
@@ -67,7 +69,6 @@ const Hero = () => {
               </div>
             </div>
             
-            {/* Decorative elements */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-md max-h-md bg-accent/5 rounded-full blur-3xl -z-10"></div>
             <div className="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 w-24 h-24 bg-primary/20 rounded-full blur-2xl -z-10 animate-float"></div>
             <div className="absolute bottom-0 left-0 transform -translate-x-1/4 translate-y-1/4 w-32 h-32 bg-accent/20 rounded-full blur-2xl -z-10 animate-float" style={{ animationDelay: '2s' }}></div>
