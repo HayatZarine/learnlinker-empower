@@ -35,7 +35,8 @@ Optimized for low-bandwidth regions.
 Layer	Technology
 - Frontend: 	HTML, CSS(Tailwind CSS) , JavaScript (React.js)
 - Backend	: Flask / Node.js (Planned for full build)
-- AI Matching	Python (AI model to be integrated) : Gemini API for student qna chatbot
+- AI Matching	Python (AI model to be integrated) : Groq API for student-teacher matching
+- Stellar for donation tracking
 - Deployment: 	Lovable App (for MVP)
 If you want to work locally using your own IDE, you can clone this repo and push changes.
 
@@ -64,6 +65,8 @@ Stealth learning mode for victims of abuse.
 Designed for global collaboration with minimum tech requirements.
 
 100% free and open for volunteers to contribute.
+
+Donate to abuse victims and underpriviledged children globally through Stellar. 
 ## 🤝 Contributing
 We're looking for contributors to help scale this into a full platform!
 Reach out at: [hayatzarine@gmail.com]
@@ -77,6 +80,8 @@ MIT License © 2025 [Zarine Hayat]
 
 ![image](https://github.com/user-attachments/assets/56134f57-1ffd-4ee2-b1cf-6bfef8ee4444)
 ![image](https://github.com/user-attachments/assets/1465c11a-c9ca-4403-97df-2c866b648811)
+![image](https://github.com/user-attachments/assets/e1bcf1a9-4694-42a8-a9c3-82fe3dcce238)
+
 
 
 
