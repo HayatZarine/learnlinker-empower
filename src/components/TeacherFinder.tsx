@@ -5,9 +5,10 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { Search, Award, Clock, Lightbulb } from "lucide-react";
+import { Search, Award, Clock, Lightbulb, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface TeacherFinderForm {
   grade: string;
@@ -25,12 +26,29 @@ interface Teacher {
 }
 
 const TeacherFinder = () => {
-  const form = useForm<TeacherFinderForm>();
+  const form = useForm<TeacherFinderForm>({
+    defaultValues: {
+      grade: '',
+      subject: '',
+      difficultyLevel: 'Intermediate'
+    }
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [matchedTeachers, setMatchedTeachers] = useState<Teacher[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async (data: TeacherFinderForm) => {
+    if (!data.grade) {
+      toast.error("Please select a grade level");
+      return;
+    }
+    if (!data.subject) {
+      toast.error("Please select a subject");
+      return;
+    }
+    
     setIsLoading(true);
+    setError(null);
     try {
       console.log("Finding teacher with:", data);
       
@@ -48,7 +66,8 @@ const TeacherFinder = () => {
         throw error;
       }
       
-      if (!response || !response.teachers) {
+      if (!response || !response.teachers || !Array.isArray(response.teachers)) {
+        console.error('Invalid response format:', response);
         throw new Error('Invalid response format');
       }
       
@@ -57,6 +76,7 @@ const TeacherFinder = () => {
       
     } catch (error) {
       console.error('Failed to find teachers:', error);
+      setError("Couldn't find teachers at this time. Please try again later.");
       toast.error("Failed to find matching teachers. Please try again.");
     } finally {
       setIsLoading(false);
@@ -75,6 +95,13 @@ const TeacherFinder = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        
         {matchedTeachers.length > 0 ? (
           <div className="space-y-6">
             <h3 className="text-lg font-medium">Your Matched Teachers</h3>
@@ -153,7 +180,7 @@ const TeacherFinder = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {["Mathematics", "Science", "English", "History", "Geography", "Computer Science", "Physics", "Chemistry", "Biology", "Art", "Music"].map((subject) => (
+                        {["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "History", "Geography", "Literature"].map((subject) => (
                           <SelectItem key={subject} value={subject}>
                             {subject}
                           </SelectItem>
