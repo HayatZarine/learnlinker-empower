@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const groqApiKey = Deno.env.get('GROQ_API_KEY');
@@ -219,8 +220,10 @@ serve(async (req) => {
             content: `Generate exactly 2 teacher profiles for grade ${grade}, subject ${subject}, and difficulty level ${difficultyLevel}.
                      Format your response as a JSON array of objects with these properties: 
                      name, expertise, experience, teachingStyle, availability, and bio.
-                     Make the response look realistic and professional.
-                     Example: [{"name": "Dr. Jane Smith", "expertise": "Advanced Math Educator", ...}, {...}]` 
+                     Make the experience field a string (not a number with "years").
+                     Do not include any text before or after the JSON array.
+                     Keep your response concise.
+                     Example: [{"name": "Dr. Jane Smith", "expertise": "Advanced Math Educator", "experience": "15 years", "teachingStyle": "Interactive", "availability": "Weekdays", "bio": "Bio text"}, {...}]` 
           }
         ],
         0.7
@@ -238,21 +241,62 @@ serve(async (req) => {
       // Try to extract JSON from the response
       let teachers;
       try {
-        // Check if content is already JSON or needs extraction
+        // First try direct parsing
         if (content.trim().startsWith('[') && content.trim().endsWith(']')) {
           teachers = JSON.parse(content);
         } else {
-          // Try to find JSON array in the text
-          const jsonMatch = content.match(/\[[\s\S]*\]/);
+          // Find JSON array pattern
+          const jsonMatch = content.match(/\[\s*\{[\s\S]*\}\s*\]/);
           if (jsonMatch) {
             teachers = JSON.parse(jsonMatch[0]);
           } else {
+            console.error("Could not extract JSON from:", content);
             throw new Error("Could not extract teacher data from response");
           }
         }
       } catch (error) {
         console.error("Error parsing teacher data:", error);
-        throw new Error("Failed to parse teacher profiles from API response");
+        
+        // Attempt to clean up the content
+        try {
+          // Fix common JSON syntax errors
+          const fixedJson = content
+            .replace(/(\w+):\s/g, '"$1": ') // Add quotes to keys
+            .replace(/,\s*}/g, '}')         // Remove trailing commas
+            .replace(/,\s*]/g, ']')         // Remove trailing commas
+            .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:([^,}]+)/g, '"$2":$4') // Fix all keys
+            .replace(/:\s*'([^']*)'/g, ':"$1"'); // Replace single quotes with double quotes
+          
+          // Try to find the array in the cleaned content
+          const arrayMatch = fixedJson.match(/\[\s*\{[\s\S]*\}\s*\]/);
+          if (arrayMatch) {
+            teachers = JSON.parse(arrayMatch[0]);
+          } else {
+            throw new Error("Could not find teacher data array");
+          }
+        } catch (innerError) {
+          console.error("Failed final attempt to parse teacher data:", innerError);
+          
+          // Create fallback teacher data
+          teachers = [
+            {
+              name: `${subject} Specialist`,
+              expertise: `${subject} for Grade ${grade}`,
+              experience: "10+ years",
+              teachingStyle: `${difficultyLevel} focus with interactive elements`,
+              availability: "Weekdays & Weekends",
+              bio: `Specialized in teaching ${subject} at grade ${grade} with focus on ${difficultyLevel} difficulty content.`
+            },
+            {
+              name: `${subject} Mentor`,
+              expertise: `${difficultyLevel} ${subject}`,
+              experience: "8+ years",
+              teachingStyle: "Personalized approach",
+              availability: "Flexible scheduling",
+              bio: `Expert in ${subject} education with special emphasis on ${difficultyLevel} content for grade ${grade} students.`
+            }
+          ];
+        }
       }
       
       // Validate teacher data
@@ -261,15 +305,18 @@ serve(async (req) => {
         throw new Error("No teacher profiles found in API response");
       }
       
-      // Ensure all required fields exist
+      // Ensure all required fields exist as strings
       teachers = teachers.map(teacher => ({
-        name: teacher.name || "Unknown Teacher",
-        expertise: teacher.expertise || `${subject} Education`,
-        experience: teacher.experience || "10+ years",
-        teachingStyle: teacher.teachingStyle || "Adaptive and engaging",
-        availability: teacher.availability || "Weekdays",
-        bio: teacher.bio || `Specializes in teaching ${subject} to grade ${grade} students.`
+        name: String(teacher.name || `${subject} Teacher`),
+        expertise: String(teacher.expertise || `${subject} Education`),
+        experience: String(teacher.experience || "10+ years"),
+        teachingStyle: String(teacher.teachingStyle || "Adaptive and engaging"),
+        availability: String(teacher.availability || "Weekdays"),
+        bio: String(teacher.bio || `Specializes in teaching ${subject} to grade ${grade} students.`)
       }));
+      
+      // Limit to 2 teachers
+      teachers = teachers.slice(0, 2);
       
       console.log("Processed teacher data:", teachers);
 
