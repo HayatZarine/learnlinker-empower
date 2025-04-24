@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const groqApiKey = Deno.env.get('GROQ_API_KEY');
@@ -17,11 +18,20 @@ serve(async (req) => {
     const requestBody = await req.json();
     const { type } = requestBody;
 
+    console.log(`Processing request of type: ${type}`);
+    console.log(`Request body:`, JSON.stringify(requestBody));
+    console.log(`Using GROQ API Key: ${groqApiKey ? 'Key exists' : 'Key missing'}`);
+
     if (type === 'generate') {
       // Generate questions using Groq
       const { subject, grade } = requestBody;
       console.log(`Generating questions for ${subject} at grade ${grade}`);
       
+      if (!groqApiKey) {
+        console.error("GROQ_API_KEY is not set");
+        throw new Error("API key not configured");
+      }
+
       const response = await fetch('https://api.groq.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -44,8 +54,16 @@ serve(async (req) => {
               Be precise and concise with the questions.`
             }
           ],
+          temperature: 0.2, // Lower temperature for more consistent outputs
         }),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Groq API Error Status:", response.status);
+        console.error("Groq API Error Body:", errorText);
+        throw new Error(`Groq API error: ${response.status}`);
+      }
 
       const data = await response.json();
       console.log("Groq API response:", JSON.stringify(data));
@@ -118,6 +136,11 @@ serve(async (req) => {
       // Evaluate answer using Groq
       const { answer, questionDifficulty } = requestBody;
       console.log(`Evaluating ${questionDifficulty} difficulty answer`);
+      
+      if (!groqApiKey) {
+        console.error("GROQ_API_KEY is not set");
+        throw new Error("API key not configured");
+      }
 
       const response = await fetch('https://api.groq.com/v1/chat/completions', {
         method: 'POST',
@@ -139,8 +162,16 @@ serve(async (req) => {
                         Respond with ONLY a number from 0 to 5, with 5 being excellent.` 
             }
           ],
+          temperature: 0.1, // Low temperature for more consistent scoring
         }),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Groq API Error Status:", response.status);
+        console.error("Groq API Error Body:", errorText);
+        throw new Error(`Groq API error: ${response.status}`);
+      }
 
       const data = await response.json();
       console.log("Evaluation response:", data);
@@ -175,6 +206,11 @@ serve(async (req) => {
       const { grade, subject, difficultyLevel } = requestBody;
       console.log(`Finding teachers for grade ${grade}, subject ${subject}, difficulty ${difficultyLevel}`);
       
+      if (!groqApiKey) {
+        console.error("GROQ_API_KEY is not set");
+        throw new Error("API key not configured");
+      }
+      
       const response = await fetch('https://api.groq.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -193,11 +229,20 @@ serve(async (req) => {
               content: `Generate exactly 2 teacher profiles for grade ${grade}, subject ${subject}, and difficulty level ${difficultyLevel}.
                        Format your response as a JSON array of objects with these properties: 
                        name, expertise, experience, teachingStyle, availability, and bio.
-                       Example: [{"name": "John Smith", "expertise": "Math", ...}, {...}]` 
+                       Make the response look realistic and professional.
+                       Example: [{"name": "Dr. Jane Smith", "expertise": "Advanced Math Educator", ...}, {...}]` 
             }
           ],
+          temperature: 0.7, // Higher temperature for creative teacher profiles
         }),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Groq API Error Status:", response.status);
+        console.error("Groq API Error Body:", errorText);
+        throw new Error(`Groq API error: ${response.status}`);
+      }
 
       const data = await response.json();
       console.log("Teacher matching response:", data);
@@ -239,8 +284,8 @@ serve(async (req) => {
       teachers = teachers.map(teacher => ({
         name: teacher.name || "Unknown Teacher",
         expertise: teacher.expertise || `${subject} Education`,
-        experience: teacher.experience || "Experienced Educator",
-        teachingStyle: teacher.teachingStyle || "Adaptive",
+        experience: teacher.experience || "10+ years",
+        teachingStyle: teacher.teachingStyle || "Adaptive and engaging",
         availability: teacher.availability || "Weekdays",
         bio: teacher.bio || `Specializes in teaching ${subject} to grade ${grade} students.`
       }));

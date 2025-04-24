@@ -2,13 +2,14 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Brain, AlertCircle } from "lucide-react";
+import { Brain, AlertCircle, Check } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 interface Question {
   text: string;
@@ -27,6 +28,7 @@ const DifficultyTest = () => {
   const [error, setError] = useState<string | null>(null);
   const [testComplete, setTestComplete] = useState(false);
   const [finalLevel, setFinalLevel] = useState<string | null>(null);
+  const [apiStatus, setApiStatus] = useState<'unconfigured' | 'configured' | 'error'>('unconfigured');
 
   const generateQuestions = async (selectedSubject: string, selectedGrade: string) => {
     if (!selectedSubject) {
@@ -41,6 +43,8 @@ const DifficultyTest = () => {
     
     setError(null);
     setIsGeneratingQuestions(true);
+    setApiStatus('unconfigured');
+    
     try {
       console.log("Calling edge function to generate questions for:", selectedSubject);
       
@@ -54,6 +58,7 @@ const DifficultyTest = () => {
 
       if (error) {
         console.error('Error from edge function:', error);
+        setApiStatus('error');
         throw error;
       }
       
@@ -69,10 +74,11 @@ const DifficultyTest = () => {
       setScores([]);
       setTestComplete(false);
       setFinalLevel(null);
+      setApiStatus('configured');
       toast.success(`Generated ${data.questions.length} questions for ${selectedSubject}`);
     } catch (error) {
       console.error('Error generating questions:', error);
-      setError("Failed to generate questions. Please try again with a different subject or grade level.");
+      setError("Failed to generate questions. Please ensure the Groq API key is correctly set.");
       toast.error("Failed to generate questions. Please try again.");
     } finally {
       setIsGeneratingQuestions(false);
@@ -151,6 +157,11 @@ const DifficultyTest = () => {
     setTestComplete(false);
     setFinalLevel(null);
     setError(null);
+    setApiStatus('unconfigured');
+  };
+
+  const getCorrectAnswersCount = () => {
+    return scores.filter(score => score >= 3).length;
   };
 
   return (
@@ -189,6 +200,7 @@ const DifficultyTest = () => {
                   <SelectItem value="history">History</SelectItem>
                   <SelectItem value="geography">Geography</SelectItem>
                   <SelectItem value="literature">Literature</SelectItem>
+                  <SelectItem value="arts">Arts</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -200,9 +212,9 @@ const DifficultyTest = () => {
                   <SelectValue placeholder="Choose grade level" />
                 </SelectTrigger>
                 <SelectContent>
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((gradeNum) => (
-                    <SelectItem key={gradeNum} value={gradeNum.toString()}>
-                      Grade {gradeNum}
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, "Graduate"].map((gradeNum) => (
+                    <SelectItem key={gradeNum.toString()} value={gradeNum.toString()}>
+                      {typeof gradeNum === 'number' ? `Grade ${gradeNum}` : gradeNum}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -236,12 +248,26 @@ const DifficultyTest = () => {
           </div>
         ) : (
           <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <div className="flex gap-2 items-center">
+                <Badge variant="outline">Correct Answers: {getCorrectAnswersCount()}</Badge>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Question {currentQuestionIndex + 1} of {questions.length}
+              </div>
+            </div>
+            
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <Label>Question {currentQuestionIndex + 1} of {questions.length}</Label>
-                <span className="text-sm text-muted-foreground capitalize">
-                  {questions[currentQuestionIndex].difficulty} Level
-                </span>
+                <Label>Question</Label>
+                <Badge variant={
+                  questions[currentQuestionIndex].difficulty === 'easy' ? 'secondary' : 
+                  questions[currentQuestionIndex].difficulty === 'intermediate' ? 'default' : 
+                  'destructive'
+                }>
+                  {questions[currentQuestionIndex].difficulty.charAt(0).toUpperCase() + 
+                  questions[currentQuestionIndex].difficulty.slice(1)} Level
+                </Badge>
               </div>
               <p className="text-lg font-medium">
                 {questions[currentQuestionIndex].text}
@@ -268,6 +294,16 @@ const DifficultyTest = () => {
                 {isSubmitting ? "Analyzing..." : "Submit Answer"}
               </Button>
             </div>
+            
+            {apiStatus !== 'unconfigured' && (
+              <div className="pt-6 text-xs text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <div className={`w-2 h-2 rounded-full ${apiStatus === 'configured' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                  API Status: {apiStatus === 'configured' ? 'Key configured' : 'Error'}
+                </div>
+                <div>Env Mode: development</div>
+              </div>
+            )}
           </div>
         )}
       </CardContent>

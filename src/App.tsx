@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
@@ -22,7 +23,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <AuthProvider>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <TooltipProvider>
             <div className="relative">
               <Toaster />
@@ -37,7 +38,7 @@ const App = () => (
                 
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
-                    <div className="min-h-screen p-8">
+                    <div className="min-h-screen bg-gradient-to-b from-background to-background/80 p-8">
                       <h1 className="text-3xl font-bold text-primary mb-8 text-center">Welcome to Dashboard</h1>
                       <div className="max-w-6xl mx-auto space-y-8">
                         <StudentDashboard />

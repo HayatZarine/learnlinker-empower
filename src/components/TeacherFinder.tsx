@@ -5,10 +5,11 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { Search, Award, Clock, Lightbulb, AlertCircle } from "lucide-react";
+import { Search, Award, Clock, Lightbulb, AlertCircle, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 
 interface TeacherFinderForm {
   grade: string;
@@ -36,6 +37,7 @@ const TeacherFinder = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [matchedTeachers, setMatchedTeachers] = useState<Teacher[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [apiStatus, setApiStatus] = useState<'unconfigured' | 'configured' | 'error'>('unconfigured');
 
   const onSubmit = async (data: TeacherFinderForm) => {
     if (!data.grade) {
@@ -49,6 +51,8 @@ const TeacherFinder = () => {
     
     setIsLoading(true);
     setError(null);
+    setApiStatus('unconfigured');
+    
     try {
       console.log("Finding teacher with:", data);
       
@@ -63,6 +67,7 @@ const TeacherFinder = () => {
       
       if (error) {
         console.error('Error from edge function:', error);
+        setApiStatus('error');
         throw error;
       }
       
@@ -72,14 +77,41 @@ const TeacherFinder = () => {
       }
       
       setMatchedTeachers(response.teachers);
+      setApiStatus('configured');
       toast.success(`Found ${response.teachers.length} matching teachers for you!`);
       
     } catch (error) {
       console.error('Failed to find teachers:', error);
-      setError("Couldn't find teachers at this time. Please try again later.");
+      setError("Couldn't find teachers at this time. Please ensure the Groq API key is correctly set.");
       toast.error("Failed to find matching teachers. Please try again.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const testApiConnection = async () => {
+    toast.info("Testing API connection...");
+    try {
+      const { data, error } = await supabase.functions.invoke('analyze-answer', {
+        body: { 
+          type: 'match',
+          grade: "1", 
+          subject: "Mathematics",
+          difficultyLevel: "Beginner"
+        },
+      });
+      
+      if (error) {
+        toast.error("API connection failed");
+        setApiStatus('error');
+        throw error;
+      }
+      
+      toast.success("API connection successful!");
+      setApiStatus('configured');
+    } catch (error) {
+      console.error('API test failed:', error);
+      setApiStatus('error');
     }
   };
 
@@ -91,7 +123,7 @@ const TeacherFinder = () => {
           Find Your Perfect Teacher
         </CardTitle>
         <CardDescription>
-          We'll match you with the best teacher for your needs
+          Tell us about your educational needs and we'll match you with teachers who can help you succeed
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -104,16 +136,23 @@ const TeacherFinder = () => {
         
         {matchedTeachers.length > 0 ? (
           <div className="space-y-6">
-            <h3 className="text-lg font-medium">Your Matched Teachers</h3>
+            <h3 className="text-lg font-medium">Teachers Matched to Your Needs</h3>
             <div className="space-y-6">
               {matchedTeachers.map((teacher, index) => (
                 <Card key={index} className="border border-primary/20">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">{teacher.name}</CardTitle>
-                    <CardDescription className="flex items-center gap-1">
-                      <Award className="h-4 w-4" />
-                      {teacher.expertise}
-                    </CardDescription>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-lg flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          {teacher.name}
+                        </CardTitle>
+                        <CardDescription className="flex items-center gap-1">
+                          <Award className="h-4 w-4" />
+                          {teacher.expertise}
+                        </CardDescription>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent className="space-y-2 pb-2 text-sm">
                     <p className="flex items-center gap-2">
@@ -124,10 +163,18 @@ const TeacherFinder = () => {
                       <Lightbulb className="h-4 w-4 text-muted-foreground" />
                       <span className="text-muted-foreground">Teaching Style:</span> {teacher.teachingStyle}
                     </p>
-                    <p className="text-muted-foreground mt-2">"{teacher.bio}"</p>
+                    <p className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Availability:</span> {teacher.availability}
+                    </p>
+                    <div className="mt-2 pt-2 border-t border-gray-700">
+                      <p className="text-sm font-medium mb-1">Bio</p>
+                      <p className="text-xs text-muted-foreground">{teacher.bio}</p>
+                    </div>
                   </CardContent>
-                  <CardFooter className="pt-2">
-                    <Button variant="outline" className="w-full">Contact Teacher</Button>
+                  <CardFooter className="flex gap-2">
+                    <Button variant="outline" className="flex-1">View Profile</Button>
+                    <Button variant="default" className="flex-1">Contact</Button>
                   </CardFooter>
                 </Card>
               ))}
@@ -148,7 +195,7 @@ const TeacherFinder = () => {
                 name="grade"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Grade</FormLabel>
+                    <FormLabel>Grade Level</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -156,9 +203,9 @@ const TeacherFinder = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((grade) => (
-                          <SelectItem key={grade} value={grade.toString()}>
-                            Grade {grade}
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, "Graduate"].map((grade) => (
+                          <SelectItem key={grade.toString()} value={grade.toString()}>
+                            {typeof grade === 'number' ? `Grade ${grade}` : grade}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -180,7 +227,7 @@ const TeacherFinder = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "History", "Geography", "Literature"].map((subject) => (
+                        {["Mathematics", "Physics", "Chemistry", "Biology", "Computer Science", "History", "Geography", "Literature", "Arts"].map((subject) => (
                           <SelectItem key={subject} value={subject}>
                             {subject}
                           </SelectItem>
@@ -215,9 +262,20 @@ const TeacherFinder = () => {
                 )}
               />
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Finding Teachers..." : "Find Teacher"}
-              </Button>
+              <div className="flex flex-col gap-2">
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Finding Teachers..." : "Find Teachers"}
+                </Button>
+                
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={testApiConnection}
+                  className="w-full"
+                >
+                  Test API Connection
+                </Button>
+              </div>
             </form>
           </Form>
         )}
