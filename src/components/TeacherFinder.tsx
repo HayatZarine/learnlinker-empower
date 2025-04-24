@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { Search, Award, Clock, Lightbulb, AlertCircle, User } from "lucide-react";
+import { Search, Award, Clock, Lightbulb, AlertCircle, User, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -70,6 +70,11 @@ const TeacherFinder = () => {
         setApiStatus('error');
         throw error;
       }
+
+      if (response?.status === "error") {
+        setApiStatus('error');
+        throw new Error(response.message || "Failed to match teachers");
+      }
       
       if (!response || !response.teachers || !Array.isArray(response.teachers)) {
         console.error('Invalid response format:', response);
@@ -91,6 +96,7 @@ const TeacherFinder = () => {
 
   const testApiConnection = async () => {
     toast.info("Testing API connection...");
+    setApiStatus('unconfigured');
     try {
       const { data, error } = await supabase.functions.invoke('analyze-answer', {
         body: { 
@@ -106,12 +112,19 @@ const TeacherFinder = () => {
         setApiStatus('error');
         throw error;
       }
+
+      if (data?.status === "error") {
+        toast.error(`API connection failed: ${data.message || "Unknown error"}`);
+        setApiStatus('error');
+        return;
+      }
       
       toast.success("API connection successful!");
       setApiStatus('configured');
     } catch (error) {
       console.error('API test failed:', error);
       setApiStatus('error');
+      toast.error("API connection failed. Please check the API key.");
     }
   };
 
@@ -271,13 +284,39 @@ const TeacherFinder = () => {
                   type="button" 
                   variant="outline" 
                   onClick={testApiConnection}
-                  className="w-full"
+                  className="w-full flex items-center justify-center gap-2"
                 >
-                  Test API Connection
+                  {apiStatus === 'configured' ? (
+                    <>
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      API Connected
+                    </>
+                  ) : (
+                    "Test API Connection"
+                  )}
                 </Button>
               </div>
             </form>
           </Form>
+        )}
+        
+        {apiStatus !== 'unconfigured' && (
+          <div className="mt-4 p-2 border rounded bg-background/50 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className={`w-3 h-3 rounded-full ${apiStatus === 'configured' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+              <span className="text-sm">{apiStatus === 'configured' ? 'API Connected' : 'API Error'}</span>
+            </div>
+            {apiStatus === 'error' && (
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={testApiConnection}
+                className="text-xs"
+              >
+                Retry
+              </Button>
+            )}
+          </div>
         )}
       </CardContent>
     </Card>

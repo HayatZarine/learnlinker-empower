@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Brain, AlertCircle, Check } from "lucide-react";
+import { Brain, AlertCircle, Check, CheckCircle } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -61,6 +61,11 @@ const DifficultyTest = () => {
         setApiStatus('error');
         throw error;
       }
+
+      if (data?.status === "error") {
+        setApiStatus('error');
+        throw new Error(data.message || "Failed to generate questions");
+      }
       
       if (!data || !data.questions || !Array.isArray(data.questions) || data.questions.length === 0) {
         console.error('Invalid response data:', data);
@@ -106,6 +111,10 @@ const DifficultyTest = () => {
 
       if (error) throw error;
       
+      if (data?.status === "error") {
+        throw new Error(data.message || "Failed to evaluate answer");
+      }
+      
       if (!data || typeof data.score !== 'number') {
         throw new Error('Invalid response format from server');
       }
@@ -146,6 +155,39 @@ const DifficultyTest = () => {
       toast.error("Failed to analyze your answer. Please try again.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const testApiConnection = async () => {
+    toast.info("Testing API connection...");
+    setApiStatus('unconfigured');
+    try {
+      const { data, error } = await supabase.functions.invoke('analyze-answer', {
+        body: { 
+          type: 'generate',
+          subject: "Mathematics",
+          grade: "1"
+        },
+      });
+      
+      if (error) {
+        toast.error("API connection failed");
+        setApiStatus('error');
+        throw error;
+      }
+      
+      if (data?.status === "error") {
+        toast.error(`API connection failed: ${data.message || "Unknown error"}`);
+        setApiStatus('error');
+        return;
+      }
+      
+      toast.success("API connection successful!");
+      setApiStatus('configured');
+    } catch (error) {
+      console.error('API test failed:', error);
+      setApiStatus('error');
+      toast.error("API connection failed. Please check the API key.");
     }
   };
 
@@ -221,13 +263,50 @@ const DifficultyTest = () => {
               </Select>
             </div>
             
-            <Button 
-              onClick={() => generateQuestions(subject, grade)}
-              className="w-full"
-              disabled={!subject || !grade || isGeneratingQuestions}
-            >
-              {isGeneratingQuestions ? "Generating Questions..." : "Start Assessment"}
-            </Button>
+            <div className="space-y-2">
+              <Button 
+                onClick={() => generateQuestions(subject, grade)}
+                className="w-full"
+                disabled={!subject || !grade || isGeneratingQuestions}
+              >
+                {isGeneratingQuestions ? "Generating Questions..." : "Start Assessment"}
+              </Button>
+              
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={testApiConnection}
+                className="w-full flex items-center justify-center gap-2 mt-2"
+              >
+                {apiStatus === 'configured' ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    API Connected
+                  </>
+                ) : (
+                  "Test API Connection"
+                )}
+              </Button>
+            </div>
+            
+            {apiStatus !== 'unconfigured' && (
+              <div className="mt-2 p-2 border rounded bg-background/50 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className={`w-3 h-3 rounded-full ${apiStatus === 'configured' ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                  <span className="text-sm">{apiStatus === 'configured' ? 'API Connected' : 'API Error'}</span>
+                </div>
+                {apiStatus === 'error' && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={testApiConnection}
+                    className="text-xs"
+                  >
+                    Retry
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         ) : testComplete ? (
           <div className="space-y-6 text-center">
@@ -296,12 +375,9 @@ const DifficultyTest = () => {
             </div>
             
             {apiStatus !== 'unconfigured' && (
-              <div className="pt-6 text-xs text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <div className={`w-2 h-2 rounded-full ${apiStatus === 'configured' ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                  API Status: {apiStatus === 'configured' ? 'Key configured' : 'Error'}
-                </div>
-                <div>Env Mode: development</div>
+              <div className="mt-2 p-2 border rounded bg-background/50 flex items-center">
+                <div className={`w-3 h-3 rounded-full ${apiStatus === 'configured' ? 'bg-green-500' : 'bg-red-500'} mr-2`}></div>
+                <span className="text-sm">{apiStatus === 'configured' ? 'API Connected' : 'API Error'}</span>
               </div>
             )}
           </div>
