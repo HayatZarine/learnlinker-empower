@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -10,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
 interface TeacherFinderForm {
   grade: string;
@@ -38,6 +38,7 @@ const TeacherFinder = () => {
   const [matchedTeachers, setMatchedTeachers] = useState<Teacher[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [apiStatus, setApiStatus] = useState<'unconfigured' | 'configured' | 'error'>('unconfigured');
+  const navigate = useNavigate();
 
   const onSubmit = async (data: TeacherFinderForm) => {
     if (!data.grade) {
@@ -187,7 +188,13 @@ const TeacherFinder = () => {
                   </CardContent>
                   <CardFooter className="flex gap-2">
                     <Button variant="outline" className="flex-1">View Profile</Button>
-                    <Button variant="default" className="flex-1">Contact</Button>
+                    <Button 
+                      variant="default" 
+                      className="flex-1"
+                      onClick={() => navigate(`/video-call/${index}`)}
+                    >
+                      Contact
+                    </Button>
                   </CardFooter>
                 </Card>
               ))}

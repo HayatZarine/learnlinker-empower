@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
@@ -16,6 +15,7 @@ import StudentDashboard from "./components/StudentDashboard";
 import StealthButton from "./components/StealthButton";
 import About from "./pages/About";
 import Donations from "./pages/Donations";
+import VideoCall from "./components/VideoCall";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +44,12 @@ const App = () => (
                         <StudentDashboard />
                       </div>
                     </div>
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/video-call/:teacherId" element={
+                  <ProtectedRoute>
+                    <VideoCall />
                   </ProtectedRoute>
                 } />
                 
