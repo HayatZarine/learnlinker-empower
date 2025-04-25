@@ -2,12 +2,15 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from '@/components/ui/form';
+import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import StellarSdk from 'stellar-sdk';
+
+const DESTINATION_PUBLIC_KEY = 'GBWHSWL3DL5INR34TLGGKXFT4GFPFUJVMHBEY4J4PMIOZ26KBS27FFXR';
 
 type DonationFormData = {
   amount: number;
@@ -23,19 +26,34 @@ export const DonationForm = () => {
   
   const onSubmit = async (data: DonationFormData) => {
     try {
-      const { error } = await supabase.from('donations').insert({
+      // First create the donation record
+      const { data: donation, error: donationError } = await supabase.from('donations').insert({
         amount: data.amount,
         recipient_type: data.recipientType,
         donor_name: data.anonymous ? null : data.donorName,
         donor_email: data.donorEmail,
         message: data.message,
-        anonymous: data.anonymous
-      });
+        anonymous: data.anonymous,
+        status: 'pending'
+      }).select().single();
 
-      if (error) throw error;
+      if (donationError) throw donationError;
+
+      // Show instructions for Stellar payment
+      toast.info(
+        <div className="space-y-2">
+          <p>Please send {data.amount} XLM to:</p>
+          <p className="font-mono text-sm break-all bg-secondary/50 p-2 rounded">{DESTINATION_PUBLIC_KEY}</p>
+          <p>Once sent, your donation will be tracked on the Stellar blockchain.</p>
+        </div>,
+        {
+          duration: 10000,
+        }
+      );
+      
+      form.reset();
       
       toast.success('Thank you for your donation!');
-      form.reset();
     } catch (error) {
       toast.error('Failed to process donation. Please try again.');
     }
