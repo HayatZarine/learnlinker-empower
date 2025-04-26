@@ -16,6 +16,7 @@ import StealthButton from "./components/StealthButton";
 import About from "./pages/About";
 import Donations from "./pages/Donations";
 import VideoCall from "./components/VideoCall";
+import VolunteerDashboard from "./pages/VolunteerDashboard";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,12 @@ const App = () => (
                 <Route path="/video-call/:teacherId" element={
                   <ProtectedRoute>
                     <VideoCall />
+                  </ProtectedRoute>
+                } />
+                
+                <Route path="/volunteer-dashboard" element={
+                  <ProtectedRoute>
+                    <VolunteerDashboard />
                   </ProtectedRoute>
                 } />
                 
