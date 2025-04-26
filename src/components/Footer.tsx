@@ -125,8 +125,8 @@ const Footer = () => {
                 </svg>
                 <span className="text-foreground/70">
                   123 Education Lane<br />
-                  Knowledge City, KS 12345<br />
-                  United States
+                  Knowledge City, <br />
+                  India
                 </span>
               </li>
             </ul>
