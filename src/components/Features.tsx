@@ -30,7 +30,7 @@ const Features = () => {
             Core Features
           </div>
           <h2 className="text-3xl md:text-4xl font-semibold mb-4">
-            Empowering Education Through AI and Community
+            Empowering Education Through AI and Community-Education for All
           </h2>
           <p className="text-foreground/70">
             Our platform combines cutting-edge technology with human connection to create a safe, accessible learning environment.
