@@ -113,7 +113,7 @@ Donate to abuse victims and underpriviledged children globally through Stellar.
 ## 📽️ Demo & Deliverables
 
 - **Demo Video Link:** https://www.loom.com/share/c2a76f2568bd43fb9d103c277e57850b?sid=562beb29-d6f1-45d2-9bfa-80402d704faf 
-
+- **PPT link:** https://docs.google.com/presentation/d/1e6eIEASWRikTz57ygjpzfrA23rHSfvzOgFD41ZwJSIY/edit?usp=sharing
 
 ---
 
