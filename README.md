@@ -1,11 +1,51 @@
-# 🌍 LearnLinker Empower
-Connecting Volunteer Teachers with Underprivileged Students Worldwide 
-🔗 MVP Live Demo : `https://learnlinker-empower.lovable.app/`
 
- ## 📌 About the Project
-LearnLinker Empower is a global educational platform designed to bring quality education to underprivileged children and marginalized women—especially those restricted from going outside due to societal norms or abuse. This initiative uses AI-powered matchmaking, real-time communication, and a secure, hidden learning mode to make learning accessible, safe, and personalized.
+![github-submission-banner](https://github.com/user-attachments/assets/a1493b84-e4e2-456e-a791-ce35ee2bcf2f)
+
+# 🚀 Learnlinker-Empower
+
+> Empowering Education through AI and community
+
+---
+
+## 📌 Problem Statement
+**Problem Statement 10 - Rethink How Non-profits Operate Digitally**
+
+---
+
+## 🎯 Objective
+LearnLinker Empower is a global educational non-profit platform designed to bring quality education to underprivileged children and marginalized women—especially those restricted from going outside due to societal norms or abuse. This initiative uses AI-powered matchmaking, real-time communication, and a secure, hidden learning mode to make learning accessible, safe, and personalized. It also tracks donations worldwide. 
+---
+
+### Your Approach:  
+- I chose this problem because in our society, abused victims are not allowed to step outside their homes ,they are not given the comfort they deserve nor get any education, thus they reamin behind on the social ladder. And another problem is that underpriviledged children do not get quality education. Government schools have lack of proper facilities so I decided to make a platform for all of these people so that they can gain knowledge for free from those who are willing to volunteer and teach them. 
+- Key challenges you addressed : 
+- Any pivots, brainstorms, or breakthroughs during hacking 
+
+---
+
+## 🛠️ Tech Stack
+
+### Core Technologies Used:
+- Frontend: HTML, TAILWIND CSS, REACT.JS
+- Backend: Node.js
+- Database: SQL
+- APIs: JITSI , GROQ
+- Hosting: LOVABLE APP
+- Stellar for tracking donations
+
+### Sponsor Technologies Used (if any):
+- [X] **Groq:** : For ai matchmaking and difficulty test
+- [ ] **Monad:** 
+- [ ] **Fluvio:** 
+- [ ] **Base:** 
+- [ ] **Screenpipe:**   
+- [X] **Stellar:** To track donations
+
+---
 
 ## ✨ Key Features
+
+Highlight the most important features of your project:
 -🧠 AI-Based Student–Teacher Matching
 Students enter their grade, level, and subject.
 
@@ -15,7 +55,6 @@ AI recommends suitable volunteer teachers from around the world.
 Real-time communication between teacher and student.
 
 Time slots are booked based on teacher availability.
-
 -🛡️ Hidden Mode for Safety
 A cloaked version of the app to provide stealth access to women facing restrictions.
 
@@ -31,32 +70,6 @@ Fully browser-based — no need for advanced hardware or installations.
 
 Optimized for low-bandwidth regions.
 
-## 🛠️ Tech Stack
-Layer	Technology
-- Frontend: 	HTML, CSS(Tailwind CSS) , JavaScript (React.js)
-- Backend	: Flask / Node.js (Planned for full build)
-- AI Matching	Python (AI model to be integrated) : Groq API for student-teacher matching
-- Stellar for donation tracking
-- Deployment: 	Lovable App (for MVP)
-If you want to work locally using your own IDE, you can clone this repo and push changes.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
 ## 🌟 Unique Selling Proposition (USP)
 First app offering AI-powered matching between volunteer educators and marginalized students.
 
@@ -67,12 +80,7 @@ Designed for global collaboration with minimum tech requirements.
 100% free and open for volunteers to contribute.
 
 Donate to abuse victims and underpriviledged children globally through Stellar. 
-## 🤝 Contributing
-We're looking for contributors to help scale this into a full platform!
-Reach out at: [hayatzarine@gmail.com]
 
-## 📃 License
-MIT License © 2025 [Zarine Hayat]
 ## Screenshots 
 ![image](https://github.com/user-attachments/assets/405547e3-11bb-48fd-a573-cc3642ad9ea0)
 ![image](https://github.com/user-attachments/assets/7a8a7471-d05b-48fc-b63b-be627db99bab)
@@ -81,6 +89,80 @@ MIT License © 2025 [Zarine Hayat]
 ![image](https://github.com/user-attachments/assets/56134f57-1ffd-4ee2-b1cf-6bfef8ee4444)
 ![image](https://github.com/user-attachments/assets/1465c11a-c9ca-4403-97df-2c866b648811)
 ![image](https://github.com/user-attachments/assets/e1bcf1a9-4694-42a8-a9c3-82fe3dcce238)
+
+---
+
+## 📽️ Demo & Deliverables
+
+- **Demo Video Link:** https://www.loom.com/share/c2a76f2568bd43fb9d103c277e57850b?sid=562beb29-d6f1-45d2-9bfa-80402d704faf 
+
+
+---
+
+## ✅ Tasks & Bonus Checklist
+
+- [X] **All members of the team completed the mandatory task - Followed at least 2 of our social channels and filled the form** (Details in Participant Manual)  
+- [X] **All members of the team completed Bonus Task 1 - Sharing of Badges and filled the form (2 points)**  (Details in Participant Manual)
+- [X] **All members of the team completed Bonus Task 2 - Signing up for Sprint.dev and filled the form (3 points)**  (Details in Participant Manual)
+
+
+
+---
+
+## 🧪 How to Run the Project
+
+### Requirements:
+- Node.js and npm
+- API Keys: Groq,Jitsi
+- .env file setup (if needed)
+
+### Local Setup:
+```bash
+# Clone the repo
+git clone https://github.com/your-team/project-name
+
+# Install dependencies
+cd project-name
+npm install
+
+# Start development server
+npm run dev
+```
+
+Provide any backend/frontend split or environment setup notes here.
+
+---
+
+## 🧬 Future Scope
+
+List improvements, extensions, or follow-up features:
+
+- 📈 More integrations : Twilio 
+- 🛡️ Security enhancements for donations
+- 🌐 Localization / broader accessibility
+- Community and mental health bots for abuse victims
+
+---
+
+## 📎 Resources / Credits
+
+- APIs or datasets used  : Groq api, Jitsi api 
+- Acknowledgements  : Lovable app : who was my only partner who helped me make the project!
+
+---
+
+## 🏁 Final Words
+
+ I learnt so much in this hackathon! I hope the organizers are reading this. This was quite a great initiative. As a beginner in the world of coding, this hackathon made me realise hackathons are supposed to be long and fun like this! 
+
+---
+## 🤝 Contributing
+We're looking for contributors to help scale this into a full platform!
+Reach out at: [hayatzarine@gmail.com]
+
+## 📃 License
+MIT License © 2025 [Zarine Hayat]
+
 
 
 
