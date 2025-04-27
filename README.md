@@ -16,10 +16,28 @@
 LearnLinker Empower is a global educational non-profit platform designed to bring quality education to underprivileged children and marginalized women—especially those restricted from going outside due to societal norms or abuse. This initiative uses AI-powered matchmaking, real-time communication, and a secure, hidden learning mode to make learning accessible, safe, and personalized. It also tracks donations worldwide. 
 ---
 
+### Solo hacker - No team 
+member name: Zarine Hayat Choudhury
+linkedin: https://www.linkedin.com/in/zarine-hayat-choudhury-9a5108335/
+github: https://github.com/HayatZarine
 ### Your Approach:  
 - I chose this problem because in our society, abused victims are not allowed to step outside their homes ,they are not given the comfort they deserve nor get any education, thus they reamin behind on the social ladder. And another problem is that underpriviledged children do not get quality education. Government schools have lack of proper facilities so I decided to make a platform for all of these people so that they can gain knowledge for free from those who are willing to volunteer and teach them. 
-- Key challenges you addressed : 
-- Any pivots, brainstorms, or breakthroughs during hacking 
+- Key challenges you addressed :
+- 1. Building a truly accessible education + nonprofit platform
+Many nonprofit platforms either focus only on fundraising OR education.
+I combined volunteering, AI-powered teacher-student matchmaking, and donation transparency into one seamless experience.
+2. Ensuring security and transparency in fundraising
+Integrating Stellar blockchain allowed secure, verifiable donation tracking.
+3. Creating an AI-driven personalized experience
+Used Groq API to generate personalized difficulty tests and match users dynamically to ideal teachers — making the platform smart, not static.
+4. Integrating multiple different APIs together smoothly: 
+Jitsi (for live video communication)
+Groq (for smart education AI)
+Stellar (for secure donations)
+➔ Managing so many APIs together without conflicts was a major technical achievement. Because as a beginner i never thought i would be able to do that. 
+5.Keeping the user interface simple for low-tech users
+Specially designed the frontend (React + Tailwind) to make it lightweight and mobile-friendly, so nonprofits with limited resources can still use it easily.
+- Any pivots, brainstorms, or breakthroughs during hacking : I started with an education platform, but through live brainstorming, I pivoted into creating a complete empowerment ecosystem — combining AI, blockchain, and live communication for nonprofits — while ensuring simplicity, transparency, and trust.
 
 ---
 
@@ -153,7 +171,8 @@ List improvements, extensions, or follow-up features:
 
 ## 🏁 Final Words
 
- I learnt so much in this hackathon! I hope the organizers are reading this. This was quite a great initiative. As a beginner in the world of coding, this hackathon made me realise hackathons are supposed to be long and fun like this! 
+ I learnt so much in this hackathon! I hope the organizers are reading this. This was quite a great initiative. As a beginner in the world of coding, this hackathon made me realise hackathons are supposed to be long and fun like this! Also I never thought i would be able to make somethings based on a ps. This is the first time indeed! This actaully gave me guts to learn something new. 
+ Thank You. 
 
 ---
 ## 🤝 Contributing
