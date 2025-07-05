@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
 
         if (event === 'SIGNED_IN') {
-          navigate('/dashboard');
+          // Don't automatically redirect - let users navigate to their intended dashboard
         }
         if (event === 'SIGNED_OUT') {
           navigate('/login');
