@@ -54,8 +54,56 @@ export type Database = {
         }
         Relationships: []
       }
+      educational_resources: {
+        Row: {
+          content: string
+          created_at: string | null
+          grade: string | null
+          id: string
+          is_ai_generated: boolean | null
+          subject: string
+          teacher_id: string
+          title: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          grade?: string | null
+          id?: string
+          is_ai_generated?: boolean | null
+          subject: string
+          teacher_id: string
+          title: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          grade?: string | null
+          id?: string
+          is_ai_generated?: boolean | null
+          subject?: string
+          teacher_id?: string
+          title?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "educational_resources_teacher_id_fkey"
+            columns: ["teacher_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
+          availability_hours: Json | null
           created_at: string | null
           first_name: string | null
           grade: string | null
@@ -64,9 +112,12 @@ export type Database = {
           phone_number: string | null
           role: string | null
           subjects: string[] | null
+          teaching_experience: string | null
+          teaching_methods: string | null
           updated_at: string | null
         }
         Insert: {
+          availability_hours?: Json | null
           created_at?: string | null
           first_name?: string | null
           grade?: string | null
@@ -75,9 +126,12 @@ export type Database = {
           phone_number?: string | null
           role?: string | null
           subjects?: string[] | null
+          teaching_experience?: string | null
+          teaching_methods?: string | null
           updated_at?: string | null
         }
         Update: {
+          availability_hours?: Json | null
           created_at?: string | null
           first_name?: string | null
           grade?: string | null
@@ -86,6 +140,8 @@ export type Database = {
           phone_number?: string | null
           role?: string | null
           subjects?: string[] | null
+          teaching_experience?: string | null
+          teaching_methods?: string | null
           updated_at?: string | null
         }
         Relationships: []
