@@ -30,6 +30,7 @@ const Login = () => {
           toast.error(error.message);
         } else {
           toast.success("Login successful!");
+          navigate('/dashboard');
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -41,6 +42,7 @@ const Login = () => {
           toast.error(error.message);
         } else {
           toast.success("Login successful!");
+          navigate('/dashboard');
         }
       }
     } catch (error) {
